@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="font-awesome.min.css">
+    <link rel="stylesheet" href="bulma.min.css">
+    <link rel="stylesheet" href="styles.css">
+
+
+ <script
+      src="jquery-3.1.1.js"
+      integrity="sha256-16cdPddA6VdVInumRGo6IbivbERE8p7CQR3HzTBuELA="
+      crossorigin="anonymous"></script>
+
+    <script src="crypto-js-aes.js"></script>
+    <script src="main.js"></script>
+
+    <title>Encryption</title>
+  </head>
+  <body id='body'>
+
+    <section class="section">
+      <div class="container">
+        <h1 class="title is-centered">Encrypt and Decrypt (Message)</h1>
+
+        <div class="columns">
+          <div class="column">
+            <div class="box">
+              <form id="encrypt-set">
+                <div class="field">
+                  <label class="label">Plain text to encrypt</label>
+                  <div class="control">
+                    <input class="input input-string" id="encrypt-plain-string" type="text" placeholder="Plain text">
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label class="label">Password to encode string with</label>
+                  <div class="control">
+                    <input class="input input-string" id="encrypt-password" type="text" placeholder="Password">
+                  </div>
+                </div>
+
+                <div class="field is-grouped">
+                  <p class="control">
+                    <input id="encrypt-submit" type="submit" value="Encrypt" class="button is-primary">
+                  </p>
+
+                  <p class="control">
+                    <input type="submit" value="Clear" class="clear-form button is-light">
+                  </p>
+                </div>
+				
+				
+				
+
+              </form>
+
+              <div class="result encryption-result-section notification">
+                <h3 class="subtitle">Encrypted text</h3>
+                <p id="encrypted-result" class="result-section"></p>
+              </div>
+            </div>
+          </div>
+
+	
+
+		  
+          <div class="column">
+            <div class="box">
+              <form id="decrypt-set">
+                <div class="field">
+                  <label class="label">Encrypted text to decrypt</label>
+                  <div class="control">
+                    <input class="input input-string" id="decrypt-plain-string" type="text" placeholder="Encrypted text">
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label class="label">Password to encode text with</label>
+                  <div class="control">
+                    <input class="input input-string" id="decrypt-password" type="text" placeholder="Password">
+                  </div>
+                </div>
+
+                <div class="field is-grouped">
+                  <p class="control">
+                    <input id="decrypt-submit" type="submit" value="Decrypt" class="button is-primary">
+                  </p>
+
+                  <p class="control">
+                    <input type="submit" value="Clear" class="clear-form button is-light">
+                  </p>
+                </div>
+              </form>
+
+              <div class="result decryption-result-section notification">
+                <h3 class="subtitle">Decrypted text</h3>
+                <span id="decrypted-result" class="result-section"></span>
+				
+				
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+	
+	
+	<script>
+function myFunction() {
+  var copyText = document.getElementById("myInput");
+  copyText.select();
+  copyText.setSelectionRange(0, 99999);
+  document.execCommand("copy");
+  
+  var tooltip = document.getElementById("myTooltip");
+  tooltip.innerHTML = "Copied: " + copyText.value;
+}
+
+function outFunc() {
+  var tooltip = document.getElementById("myTooltip");
+  tooltip.innerHTML = "Copy to clipboard";
+}
+</script>
+
+
+  </body>
+</html>
