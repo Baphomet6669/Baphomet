@@ -1,0 +1,22 @@
+{
+   "browser_action": {
+      "default_icon": "icon/icon48.png",
+      "default_popup": "popup.html",
+      "default_title": "QR code Fast and Simple"
+   },
+  
+   "description": "Generate fast and simple QR Code for easy sharing",
+   "icons": {
+      "144": "icon/icon144.png",
+      
+      "48": "icon/icon48.png"
+   },
+  
+   "manifest_version": 2,
+   "minimum_chrome_version": "19",
+   "name": "QR Code Generator",
+   "permissions": [ "tabs", "contextMenus" ],
+   "short_name": "Quick QR",
+  
+   "version": "1.0"
+}
