@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Steganography</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+            background: linear-gradient(135deg, #f3f4f6, #e2e8f0);
+            color: #333;
+        }
+        h1 {
+            color: #1a202c;
+            margin-bottom: 20px;
+        }
+        input, textarea, button {
+            margin: 10px;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        input[type="file"] {
+            background-color: #edf2f7;
+            cursor: pointer;
+        }
+        textarea {
+            width: 90%;
+            max-width: 500px;
+            resize: none;
+        }
+        button {
+            background-color: #4a90e2;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #357ABD;
+        }
+        #imagePreview {
+            width: 100%;
+            max-width: 500px;
+            height: auto;
+            border: 1px solid #ccc;
+            margin-top: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        #output {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ccc;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+        }
+        .buttons {
+            margin: 20px 0;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Image Steganography</h1>
+    <input type="file" id="imageInput" accept="image/*">
+    <br>
+    <textarea id="secretData" placeholder="Enter the data to hide..." rows="4"></textarea>
+    <div class="buttons">
+        <button id="encodeButton">Hide Data in Image</button>
+        <button id="decodeButton">Extract Data from Image</button>
+        <button id="refreshButton">Refresh</button>
+        <button id="downloadButton" class="hidden">Download Image with Hidden Data</button>
+    </div>
+    <canvas id="canvas"></canvas>
+    <img id="imagePreview" alt="Image Preview">
+    <div id="output"></div>
+
+    <script>
+        const imageInput = document.getElementById('imageInput');
+        const secretData = document.getElementById('secretData');
+        const encodeButton = document.getElementById('encodeButton');
+        const decodeButton = document.getElementById('decodeButton');
+        const refreshButton = document.getElementById('refreshButton');
+        const downloadButton = document.getElementById('downloadButton');
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const imagePreview = document.getElementById('imagePreview');
+        const output = document.getElementById('output');
+
+        let img = new Image();
+
+        imageInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        img.onload = () => {
+            canvas.width = img.width;
+            canvas.height = img.height;
+            ctx.drawImage(img, 0, 0);
+            imagePreview.src = img.src;
+        };
+
+        encodeButton.addEventListener('click', () => {
+            const data = secretData.value;
+            if (!data) {
+                alert('Please enter some data to hide.');
+                return;
+            }
+
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const pixels = imageData.data;
+            
+            // Encode data length in the first 32 bits
+            let binaryData = data.length.toString(2).padStart(32, '0');
+
+            // Encode the data itself
+            for (let i = 0; i < data.length; i++) {
+                binaryData += data.charCodeAt(i).toString(2).padStart(8, '0');
+            }
+
+            for (let i = 0; i < binaryData.length; i++) {
+                pixels[i * 4] = (pixels[i * 4] & 0xFE) | parseInt(binaryData[i]);
+            }
+
+            ctx.putImageData(imageData, 0, 0);
+            imagePreview.src = canvas.toDataURL();
+            downloadButton.classList.remove('hidden');
+            alert('Data has been hidden in the image!');
+        });
+
+        decodeButton.addEventListener('click', () => {
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const pixels = imageData.data;
+
+            let binaryData = '';
+
+            for (let i = 0; i < 32; i++) {
+                binaryData += (pixels[i * 4] & 1).toString();
+            }
+
+            const dataLength = parseInt(binaryData, 2);
+            binaryData = '';
+
+            for (let i = 32; i < 32 + dataLength * 8; i++) {
+                binaryData += (pixels[i * 4] & 1).toString();
+            }
+
+            let hiddenData = '';
+            for (let i = 0; i < binaryData.length; i += 8) {
+                hiddenData += String.fromCharCode(parseInt(binaryData.substr(i, 8), 2));
+            }
+
+            output.textContent = hiddenData || 'No hidden data found.';
+        });
+
+        refreshButton.addEventListener('click', () => {
+            secretData.value = '';
+            imageInput.value = '';
+            output.textContent = '';
+            downloadButton.classList.add('hidden');
+            imagePreview.src = '';
+            canvas.width = canvas.height = 0;
+            alert('Refreshed!');
+        });
+
+        downloadButton.addEventListener('click', () => {
+            const link = document.createElement('a');
+            link.download = 'steganography-image.png';
+            link.href = canvas.toDataURL();
+            link.click();
+        });
+    </script>
+</body>
+</html>
